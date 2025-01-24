@@ -27,7 +27,7 @@ module Kaminari::Helpers
     # with pure ERB.
     class ActionViewTemplateProxy < ActionView::Base
       def initialize(current_path: nil, param_name: nil, current_params: nil)
-        super()
+        super(ActionView::LookupContext.new(current_path), current_params, nil)
 
         @current_path = current_path
         @param_name = param_name || Kaminari.config.page_method_name
@@ -36,6 +36,14 @@ module Kaminari::Helpers
 
         view_paths << SinatraHelpers.view_paths
         view_paths << File.join(Gem.loaded_specs['kaminari-core'].gem_dir, 'app/views')
+      end
+
+      def compiled_method_container
+        self.class
+      end
+
+      def self.compiled_method_container
+        self
       end
 
       def url_for(params)
@@ -93,7 +101,7 @@ module Kaminari::Helpers
 
         template = ActionViewTemplateProxy.new current_params: current_params, current_path: current_path, param_name: options[:param_name] || Kaminari.config.param_name
 
-        super scope, {template: template}.merge(options)
+        super scope, **{template: template}.merge(options)
       end
     end
     Kaminari::Helpers::HelperMethods.prepend SinatraHelperMethods

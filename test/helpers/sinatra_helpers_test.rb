@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-require 'test_helper'
+require_relative '../test_helper'
 
 ERB_TEMPLATE_FOR_PAGINATE = <<EOT
 <div>
